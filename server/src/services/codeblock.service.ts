@@ -10,6 +10,17 @@ export async function getCodeBlocks(roomName: string): Promise<ICodeBlock> {
   }
 }
 
+export async function getRoomTitles(): Promise<string[]> {
+  try {
+    const codeBlocks = await CodeBlock.find({}, "title"); // Fetch only the 'title' field
+    const titles = codeBlocks.map((block) => block.language);
+    return titles;
+  } catch (error) {
+    console.error("Error fetching room titles:", error);
+    return [];
+  }
+}
+
 export async function updateCodeBlock(code: string, roomName: string): Promise<ICodeBlock | null> {
   try {
     // Find the code block document by room name

@@ -1,9 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
+
+type CodeLanguage = "js" | "html";
 
 // Interface to describe a code block
 export interface ICodeBlock extends Document {
   roomName: string;
-  title: string;
+  language: CodeLanguage;
   code: string;
 }
 
@@ -14,7 +16,7 @@ const codeBlockSchema: Schema = new Schema({
     required: true,
     trim: true,
   },
-  title: {
+  language: {
     type: String,
     required: true,
     trim: true,
@@ -26,6 +28,10 @@ const codeBlockSchema: Schema = new Schema({
 });
 
 // Creating the model
-const CodeBlock = mongoose.model<ICodeBlock>('CodeBlock', codeBlockSchema, 'code-blocks');
+const CodeBlock = mongoose.model<ICodeBlock>(
+  "CodeBlock",
+  codeBlockSchema,
+  "code-blocks"
+);
 
 export default CodeBlock;

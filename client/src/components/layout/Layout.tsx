@@ -1,44 +1,49 @@
-import { useEffect, useState } from 'react';
-import RoomList from '../RoomList';
-import './Layout.css';
-import socketIoService from '../../Services/SocketIoService';
-import EditorCode from '../EditorCode';
+import { useEffect, useState } from "react";
+import RoomList from "../RoomList";
+import "./Layout.css";
+import socketIoService from "../../Services/SocketIoService";
+import EditorCode from "../EditorCode";
 
 function Layout(): JSX.Element {
-  const [roomList /*, setRoomList*/] = useState(['html', 'js']);
-  const [code, setCode] = useState('');
-  const [roomName, setRoomName] = useState('');
-  const [role, setRole] = useState<'student' | 'mentor' | null>();
+  const [roomList, setRoomList] = useState([]);
+  const [code, setCode] = useState("");
+  const [roomName, setRoomName] = useState("");
+  const [language, setLanguage] = useState<"js" | "html">("js");
+  const [role, setRole] = useState<"student" | "mentor" | null>();
 
   useEffect(() => {
-    console.log('roomName', roomName);
+    console.log("roomName", roomName);
     if (roomName) {
-      socketIoService.socket.emit('joinedRoom', { roomName });
+      socketIoService.socket.emit("joinedRoom", { roomName });
     }
   }, [roomName]);
 
   useEffect(() => {
-    socketIoService.socket.on('sendCode', (data) => {
-      setCode(data.code);
+    socketIoService.socket.on("roomTitles", ({ titles }) => {
+      setRoomList(titles);
     });
-    socketIoService.socket.on('codeEdited', (data) => {
-      console.log('🚀 ~ file: Layout.tsx:25 ~ socketIoService.socket.on ~ data:', data);
+    socketIoService.socket.on("sendCode", (data) => {
       setCode(data.code);
+      setLanguage(data.language);
     });
-    socketIoService.socket.on('role', (data) => {
-      console.log('role', data);
+
+    socketIoService.socket.on("role", (data) => {
+      console.log("role", data);
       setRole(data.role);
     });
   }, []);
 
   useEffect(() => {
-    console.log('🚀 ~ file: Layout.tsx:37 ~ Layout ~ code:', code);
+    console.log("🚀 ~ file: Layout.tsx:37 ~ Layout ~ code:", code);
   }, [code]);
 
   const handleCodeChange = (codeStr: string) => {
-    if (role === 'student') {
+    if (role === "student") {
       setCode(codeStr);
-      socketIoService.socket.emit('emitCodeChange', { code: codeStr, roomName });
+      socketIoService.socket.emit("emitCodeChange", {
+        code: codeStr,
+        roomName,
+      });
     }
   };
 
@@ -49,9 +54,17 @@ function Layout(): JSX.Element {
       </header>
       <div className="main-container">
         <div className="code-editor">
-          <h1>{roomName ? `Room: ${roomName.toUpperCase()}` : 'Select a room'}</h1>
+          <h1>
+            {roomName ? `Room: ${roomName.toUpperCase()}` : "Select a room"}
+          </h1>
           {role && <h2>Role: {role}</h2>}
-          {roomName && <EditorCode roomName={roomName} code={code} setCode={handleCodeChange} />}
+          {language && (
+            <EditorCode
+              language={language}
+              code={code}
+              setCode={handleCodeChange}
+            />
+          )}
         </div>
         <div className="sidebar">
           <div className="code-block">
