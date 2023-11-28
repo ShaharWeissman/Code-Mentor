@@ -20,30 +20,31 @@ export async function getAllCodeBlocks(): Promise<ICodeBlock[]> {
     return null;
   }
 }
-//Update the codeBlock based on roomName
+//Update the codeBlock based on _id
 export async function updateCodeBlock(
   code: string,
-  roomName: string
+  _id: string
 ): Promise<ICodeBlock | null> {
   try {
     // Find the code block document by room name
-    const codeBlock = await CodeBlock.findOne({ roomName: roomName });
+    const codeBlock = await CodeBlock.findOneAndUpdate({ _id });
 
     if (codeBlock) {
       // Update the code field
       codeBlock.code = code;
-
+      console.log("Updated codeBlock:", codeBlock);
       // Save the updated document
       await codeBlock.save();
+      console.log("CodeBlock saved successfully!");
 
       return codeBlock;
     } else {
       // Handle case where no document is found
-      console.log(`No code block found for room: ${roomName}`);
+      console.log(`No code block found for room: ${_id}`);
       return null;
     }
   } catch (error) {
-    console.error(`Error updating code block in room ${roomName}:`, error);
+    console.error(`Error updating code block in room ${_id}:`, error);
     return null;
   }
 }

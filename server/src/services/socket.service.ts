@@ -64,11 +64,11 @@ function handleSocketIo(httpServer: HttpServer): void {
     });
 
     // Handle event when client emits the code changes
-    socket.on("emitCodeChange", (data: { roomName: string; code: string }) => {
+    socket.on("emitCodeChange", (data: { _id: string; code: string }) => {
       // 1.save code to db and emit changes to other clients in the room
-      console.log("🚀 ~ file: socket.service.ts:72 ~ socket.on ~ code:", data);
-      updateCodeBlock(data.code, data.roomName);
-      socket.to(data.roomName).emit("codeEdited", data);
+      console.log("code:", data);
+      updateCodeBlock(data.code, data._id);
+      socket.to(data._id).emit("codeEdited", data);
     });
     //handle disconnect
     socket.on("disconnect", () => {

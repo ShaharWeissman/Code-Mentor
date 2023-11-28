@@ -13,7 +13,7 @@ function RoomList({ roomList, setCurrentCodeBlock }: Props) {
   };
   return (
     <div>
-      <span>Select Study Room</span>
+      <span className="room-list-title">rooms:</span>
       {roomList.map((room) => (
         <div
           className="room-btn"

@@ -61,7 +61,7 @@ function Layout(): JSX.Element {
       //emit the updated code to the server
       socketIoService.socket.emit("emitCodeChange", {
         code: codeStr,
-        roomName: codeBlock?._id,
+        _id: codeBlock?._id,
       });
     }
   };
