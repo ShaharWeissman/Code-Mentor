@@ -2,14 +2,14 @@ import mongoose, { Document, Schema } from "mongoose";
 
 type CodeLanguage = "js" | "html";
 
-// Interface to describe a code block
+// Interface describe a codeBlock
 export interface ICodeBlock extends Document {
   roomName: string;
   language: CodeLanguage;
   code: string;
 }
 
-// Mongoose schema for a code block
+// Mongoose schema for a codeBlock
 const codeBlockSchema: Schema = new Schema({
   roomName: {
     type: String,

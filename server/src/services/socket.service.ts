@@ -1,8 +1,8 @@
 import { Server as HttpServer } from "http";
 import { Server as SocketIoServer, Socket } from "socket.io";
 import {
-  getCodeBlocks,
-  getRoomTitles,
+  getAllCodeBlocks,
+  getCodeBlock,
   updateCodeBlock,
 } from "./codeblock.service";
 
@@ -14,48 +14,48 @@ function leaveAllRoomsExceptOwn(socket: Socket) {
     }
   });
 }
-
-async function emitRoomTitles(socket: Socket) {
+//Function to emit all the codeBlocks to connected client
+async function emitCodeBlocks(socket: Socket) {
   try {
-    const titles = await getRoomTitles();
-    socket.emit("roomTitles", { titles });
+    const codeBlockArr = await getAllCodeBlocks();
+    socket.emit("codeBlocks", { collection: codeBlockArr });
   } catch (error) {
     console.error(error);
   }
 }
 
-//this handle socket.io operations
+//Function for handling socket.io operations
 function handleSocketIo(httpServer: HttpServer): void {
-  //create the options - any client connect +use (cors)
   const options = { cors: { origin: "*" } };
 
-  //create the socket.io server (its another server)
+  //Create the socket.io server instance
   const io = new SocketIoServer(httpServer, options);
 
-  //1) the server listen to client connections not async
+  //The server listen to client connections not async
   io.on("connection", (socket: Socket) => {
     console.log("client is connected to socket.io server", { id: socket.id });
-    // async but we dont need to wait it will emit when it can
-    emitRoomTitles(socket);
+    //Emit the codeBlocks to the connected client
+    emitCodeBlocks(socket);
 
-    socket.on("joinedRoom", async ({ roomName }) => {
-      const codeBlockDocument = await getCodeBlocks(roomName);
+    //Handle event when a client join the rome
+    socket.on("joinedRoom", async ({ roomId }) => {
+      const codeBlockDocument = await getCodeBlock(roomId); //fetch the codeBlock document by roomId
       if (!codeBlockDocument?.code) {
         throw new Error("code block not found");
       }
-      // const { code } = dbCodeService.find((codeBlock) => codeBlock.roomName === roomName);
-      const { code, language } = codeBlockDocument;
 
+      const { code, language } = codeBlockDocument;
+      //emit the language(for the syntax highlight code) and the code
       socket.emit("sendCode", { code, language });
-      console.log({ roomName: roomName });
+      console.log({ roomName: roomId });
 
       leaveAllRoomsExceptOwn(socket);
-      socket.join(roomName);
+      socket.join(roomId);
 
       // After joining the room, fetch and log all clients in that room
-      const roomOccupants = io.sockets.adapter.rooms.get(roomName);
-
-      console.log(`Clients in room ${roomName}:`, roomOccupants);
+      const roomOccupants = io.sockets.adapter.rooms.get(roomId);
+      //
+      console.log(`Clients in room ${roomId}:`, roomOccupants);
       const role: "mentor" | "student" =
         [...roomOccupants].length === 1 ? "mentor" : "student";
 
@@ -63,13 +63,14 @@ function handleSocketIo(httpServer: HttpServer): void {
       console.log(`role of ${socket.id} is: ${role}`);
     });
 
-    // client -> socket.emit('codeEdited', { roomName, code })
+    // Handle event when client emits the code changes
     socket.on("emitCodeChange", (data: { roomName: string; code: string }) => {
-      // 1.save code to db
+      // 1.save code to db and emit changes to other clients in the room
+      console.log("🚀 ~ file: socket.service.ts:72 ~ socket.on ~ code:", data);
       updateCodeBlock(data.code, data.roomName);
       socket.to(data.roomName).emit("codeEdited", data);
     });
-
+    //handle disconnect
     socket.on("disconnect", () => {
       console.log("Client is disconnected");
     });

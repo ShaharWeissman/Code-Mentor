@@ -1,27 +1,30 @@
-import CodeBlock, { ICodeBlock } from '../models/message-model';
+import CodeBlock, { ICodeBlock } from "../models/icodeblocks.model";
 
-export async function getCodeBlocks(roomName: string): Promise<ICodeBlock> {
+//Fetch a codeBlock by the its id
+export async function getCodeBlock(_id: string): Promise<ICodeBlock> {
   try {
-    const codeBlock = await CodeBlock.findOne({ roomName: roomName });
+    const codeBlock = await CodeBlock.findOne({ _id });
     return codeBlock;
   } catch (error) {
     console.log(error);
     return null;
   }
 }
-
-export async function getRoomTitles(): Promise<string[]> {
+//Fetch all codeBlocks
+export async function getAllCodeBlocks(): Promise<ICodeBlock[]> {
   try {
-    const codeBlocks = await CodeBlock.find({}, "title"); // Fetch only the 'title' field
-    const titles = codeBlocks.map((block) => block.language);
-    return titles;
+    const codeBlock = await CodeBlock.find({});
+    return codeBlock;
   } catch (error) {
-    console.error("Error fetching room titles:", error);
-    return [];
+    console.log(error);
+    return null;
   }
 }
-
-export async function updateCodeBlock(code: string, roomName: string): Promise<ICodeBlock | null> {
+//Update the codeBlock based on roomName
+export async function updateCodeBlock(
+  code: string,
+  roomName: string
+): Promise<ICodeBlock | null> {
   try {
     // Find the code block document by room name
     const codeBlock = await CodeBlock.findOne({ roomName: roomName });

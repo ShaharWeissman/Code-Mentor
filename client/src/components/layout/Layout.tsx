@@ -4,27 +4,44 @@ import "./Layout.css";
 import socketIoService from "../../Services/SocketIoService";
 import EditorCode from "../EditorCode";
 
+export interface CodeBlockDocument {
+  _id: string;
+  roomName: string;
+  language: "js" | "html";
+  code: string;
+}
+
 function Layout(): JSX.Element {
-  const [roomList, setRoomList] = useState([]);
+  const [codeBlocks, setCodeBlocks] = useState<CodeBlockDocument[]>([]); //state for codeBlocks documents from server
   const [code, setCode] = useState("");
-  const [roomName, setRoomName] = useState("");
-  const [language, setLanguage] = useState<"js" | "html">("js");
+  const [codeBlock, setCurrentCodeBlock] = useState<CodeBlockDocument>();
+  // State check the user's role, either student or mentor
   const [role, setRole] = useState<"student" | "mentor" | null>();
 
   useEffect(() => {
-    console.log("roomName", roomName);
-    if (roomName) {
-      socketIoService.socket.emit("joinedRoom", { roomName });
+    console.log("roomName", { codeBlock });
+    if (codeBlock) {
+      //emitting Join room event
+      socketIoService.socket.emit("joinedRoom", { roomId: codeBlock._id });
     }
-  }, [roomName]);
+  }, [codeBlock]);
 
   useEffect(() => {
-    socketIoService.socket.on("roomTitles", ({ titles }) => {
-      setRoomList(titles);
-    });
+    socketIoService.socket.on(
+      "codeBlocks",
+      ({ collection }: { collection: CodeBlockDocument[] }) => {
+        console.log({ collection });
+        setCodeBlocks(collection);
+      }
+    );
+
     socketIoService.socket.on("sendCode", (data) => {
       setCode(data.code);
-      setLanguage(data.language);
+    });
+
+    socketIoService.socket.on("codeEdited", (data) => {
+      console.log("data:", data);
+      setCode(data.code);
     });
 
     socketIoService.socket.on("role", (data) => {
@@ -34,15 +51,17 @@ function Layout(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    console.log("🚀 ~ file: Layout.tsx:37 ~ Layout ~ code:", code);
+    console.log("code:", code);
   }, [code]);
 
   const handleCodeChange = (codeStr: string) => {
+    // Allowing only students to edit code
     if (role === "student") {
       setCode(codeStr);
+      //emit the updated code to the server
       socketIoService.socket.emit("emitCodeChange", {
         code: codeStr,
-        roomName,
+        roomName: codeBlock?._id,
       });
     }
   };
@@ -55,12 +74,15 @@ function Layout(): JSX.Element {
       <div className="main-container">
         <div className="code-editor">
           <h1>
-            {roomName ? `Room: ${roomName.toUpperCase()}` : "Select a room"}
+            {codeBlock
+              ? `Room: ${codeBlock.roomName.toUpperCase()}`
+              : "Select a room"}
           </h1>
+          {/* //allowing editing if user has student role */}
           {role && <h2>Role: {role}</h2>}
-          {language && (
+          {codeBlock?.language && (
             <EditorCode
-              language={language}
+              language={codeBlock.language}
               code={code}
               setCode={handleCodeChange}
             />
@@ -68,7 +90,10 @@ function Layout(): JSX.Element {
         </div>
         <div className="sidebar">
           <div className="code-block">
-            <RoomList roomList={roomList} setRoomName={setRoomName} />
+            <RoomList
+              roomList={codeBlocks}
+              setCurrentCodeBlock={setCurrentCodeBlock}
+            />
           </div>
         </div>
       </div>

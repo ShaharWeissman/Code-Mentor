@@ -1,22 +1,24 @@
-import Editor from "react-simple-code-editor";
+import Editor from "react-simple-code-editor";//https://www.npmjs.com/
 import "./EditorCode.css";
 import "prismjs/themes/prism.css";
 import Prism from "prismjs";
 
 type Props = {
-  language: "js" | "html";
+  language: "js" | "html"; //for syntax highlighting
   code: string;
   setCode: (code: string) => void;
 };
 
 function EditorCode({ language, code, setCode }: Props) {
   const handleInput = (codeStr: string) => {
+    //sets the updated code string
     setCode(codeStr);
   };
 
   return (
     <div className="highlighted-code">
       <Editor
+        className="code-display"
         value={code}
         onValueChange={handleInput}
         highlight={(code) =>

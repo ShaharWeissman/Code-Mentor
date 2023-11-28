@@ -1,22 +1,24 @@
-import 'dotenv/config';
+// Load environment variables from .env file
+import "dotenv/config";
 
-import express from 'express';
-import socketService from './services/socket.service';
-import mongoose from 'mongoose';
+import express from "express";
+import socketService from "./services/socket.service";
+import mongoose from "mongoose";
 
-// Connect to MongoDB
+// Connect to MongoDB(uri from env variable)
 mongoose.connect(process.env.MONGODB_URI);
-
-mongoose.connection.once('open', () => {
-  console.log('Connected to MongoDB');
+//When connected to MongoDB, log message
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
 });
+//Port for express server to listen on
 const PORT = process.env.PORT || 4000;
 const app = express();
 
-//give me natvie http server 4 socket
+// Creating an HTTP server for socket connections
 const httpServer = app.listen(PORT, () => {
-  console.log('listening on port http://localhost:' + PORT);
+  console.log("listening on port http://localhost:" + PORT);
 });
 
-//send native http server to soket service
+//Send  http server to socket service
 socketService.handleSocketIo(httpServer);

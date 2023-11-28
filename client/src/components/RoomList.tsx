@@ -1,16 +1,25 @@
-import './RoomList.css';
+import "./RoomList.css";
+import { CodeBlockDocument } from "./layout/Layout";
 
-type Props = { roomList: string[]; setRoomName: (roomName: string) => void };
+type Props = {
+  roomList: CodeBlockDocument[]; //the list of codeBlocks documents
+  setCurrentCodeBlock: (codeBlock: CodeBlockDocument) => void;
+};
 
-function RoomList({ roomList, setRoomName }: Props) {
-  const handleRoomSelect = (room: string) => {
-    setRoomName(room);
+function RoomList({ roomList, setCurrentCodeBlock }: Props) {
+  //function to cope with selection of codeBlocks
+  const handleRoomSelect = (codeBlock: CodeBlockDocument) => {
+    setCurrentCodeBlock(codeBlock);
   };
   return (
     <div>
-      {roomList.map((room: string) => (
-        <div className="room-btn" key={room} onClick={() => handleRoomSelect(room)}>
-          {room.toUpperCase()}
+      <span>Select Study Room</span>
+      {roomList.map((room) => (
+        <div
+          className="room-btn"
+          key={room._id}
+          onClick={() => handleRoomSelect(room)}>
+          {room.roomName.toUpperCase()}
         </div>
       ))}
     </div>
