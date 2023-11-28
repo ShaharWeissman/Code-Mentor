@@ -73,13 +73,13 @@ function Layout(): JSX.Element {
       </header>
       <div className="main-container">
         <div className="code-editor">
-          <h1>
+          <h3>
             {codeBlock
               ? `Room: ${codeBlock.roomName.toUpperCase()}`
               : "Select a room"}
-          </h1>
+          </h3>
           {/* //allowing editing if user has student role */}
-          {role && <h2>Role: {role}</h2>}
+          {role && <h3>Role: {role}</h3>}
           {codeBlock?.language && (
             <EditorCode
               language={codeBlock.language}

@@ -1,15 +1,24 @@
 .room-btn {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 8px;
+  margin-top: 9px;
+
+  margin-left: 15px;
   background-color: #333;
   color: #fff;
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 8px;
-  width: calc(100% - 20px); 
+  width: calc(80% - 20px);
+  height: 50px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
 }
 
 .room-btn:hover {
   opacity: 0.8;
+  border-color: #fff;
 }
