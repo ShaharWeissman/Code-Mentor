@@ -13,10 +13,10 @@ mongoose.connection.once('open', () => {
 const PORT = process.env.PORT || 4000;
 const app = express();
 
-//give me natvie http server 4 socket
+//give me native http server 4 socket
 const httpServer = app.listen(PORT, () => {
   console.log('listening on port http://localhost:' + PORT);
 });
 
-//send native http server to soket service
+//send native http server to socket service
 socketService.handleSocketIo(httpServer);

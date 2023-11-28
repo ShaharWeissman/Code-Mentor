@@ -2,10 +2,13 @@ import './RoomList.css';
 
 type Props = { roomList: string[]; setRoomName: (roomName: string) => void };
 
-function RoomList({ roomList, setRoomName }: Props) {
+function RoomList({ roomList, setRoomName }: Props): JSX.Element{
   const handleRoomSelect = (room: string) => {
     setRoomName(room);
   };
+
+
+  
   return (
     <div>
       {roomList.map((room: string) => (

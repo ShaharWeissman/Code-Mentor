@@ -4,6 +4,7 @@ import socketIoService from './Services/SocketIoService';
 
 function App() {
   useEffect(() => {
+    //the connection of the socket
     socketIoService.connect();
   }, []);
 

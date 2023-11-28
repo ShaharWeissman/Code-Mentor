@@ -1,4 +1,4 @@
-import CodeBlock, { ICodeBlock } from '../models/message-model';
+import CodeBlock, { ICodeBlock } from "../models/idCodeBlock.model";
 
 export async function getCodeBlocks(roomName: string): Promise<ICodeBlock> {
   try {
@@ -10,7 +10,21 @@ export async function getCodeBlocks(roomName: string): Promise<ICodeBlock> {
   }
 }
 
-export async function updateCodeBlock(code: string, roomName: string): Promise<ICodeBlock | null> {
+export async function getRoomTitles(): Promise<string[]> {
+  try {
+    const codeBlocks = await CodeBlock.find({}, "title"); // Fetch only the 'title' field
+    const titles = codeBlocks.map((block) => block.title);
+    return titles;
+  } catch (error) {
+    console.error("Error fetching room titles:", error);
+    return [];
+  }
+}
+
+export async function updateCodeBlock(
+  code: string,
+  roomName: string
+): Promise<ICodeBlock | null> {
   try {
     // Find the code block document by room name
     const codeBlock = await CodeBlock.findOne({ roomName: roomName });
@@ -30,6 +44,28 @@ export async function updateCodeBlock(code: string, roomName: string): Promise<I
     }
   } catch (error) {
     console.error(`Error updating code block in room ${roomName}:`, error);
+    return null;
+  }
+}
+export async function updateCodeBlockTitle(
+  title: string,
+  newRoomName: string
+): Promise<ICodeBlock | null> {
+  try {
+    const codeBlock = await CodeBlock.findOne({ roomName: title });
+
+    if (codeBlock) {
+      codeBlock.title = newRoomName;
+      await codeBlock.save();
+      return codeBlock;
+    } else {
+      console.log(`No document found for room: ${title}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(
+      `Error updating room name to ${newRoomName}: ${error.message}`
+    );
     return null;
   }
 }
