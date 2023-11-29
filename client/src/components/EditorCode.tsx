@@ -27,7 +27,7 @@ function EditorCode({ language, code, setCode }: Props) {
         padding={10}
         style={{
           fontFamily: '"Fira code", "Fira Mono", monospace',
-          fontSize: 15,
+          fontSize: 13,
         }}
       />
     </div>
