@@ -1,43 +1,56 @@
 .code-display {
-  width: 80%;
-  height: 200px;
-  border: 1px solid #ccc;
-  padding: 10px;
+  width: 100%;
+  height: 300px;
+  border: 2px solid #4db6ac;
+  padding: 15px;
   white-space: pre-wrap;
-  font-family: 'Fira code', 'Fira Mono', monospace;
-  color: black;
-  margin-right: 10px;
-  resize: none; 
-  font-size: 13px;
+  font-family: 'Fira Code', monospace;
+  color: #333;
+  resize: none;
+  font-size: 16px;
+  outline: none; 
+  background-color: #f7f7f7;
+  border-radius: 8px;
 }
 
 .highlighted-code {
-  margin-top: 10px;
-  max-height: 400px;
-  border-radius: 5px;
-  background-color: #f3f3f3;
-  font-family: 'Fira code', 'Fira Mono', monospace;
+  margin-top: 20px;
+  max-height: 500px;
+  border-radius: 8px;
+  background-color: #fff;
+  font-family: 'Fira Code', monospace;
   overflow-y: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .editor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 15px;
+  background-color: #4db6ac;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .editor-header h1 {
-  margin-top: 0;
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
 }
 
 .editor-header button {
   font-family: 'M PLUS 1 Code', monospace;
-  padding: 10px;
-  margin-left: 10px;
-  background-color: #4db6ac;
-  color: rgb(255, 255, 255);
-  font-weight: bolder;
+  padding: 10px 20px;
+  background-color: #fff;
+  color: #4db6ac;
+  font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editor-header button:hover {
+  background-color: #e0e0e0;
 }
